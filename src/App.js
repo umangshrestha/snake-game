@@ -45,6 +45,7 @@ class App extends Component {
     componentDidMount() {
         setInterval(this.moveSnake, this.state.speed);
         document.onkeydown = this.changeDirection;
+        document.title = "snake-game";
     }
 
     componentDidUpdate() {
