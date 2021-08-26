@@ -54,7 +54,7 @@ class App extends Component {
 
     moveSnake = () => {
         let snakeCopy = [...this.state.snake];
-        let head  =  {...snakeCopy[0]};
+        let head  =  {...snakeCopy[snakeCopy.length-1]};
         switch (this.state.direction) {
             case LEFT:  head.y += -1; break;    
             case UP:    head.x += -1; break;
@@ -77,7 +77,7 @@ class App extends Component {
     
     isEaten() {
         let snakeCopy  = [...this.state.snake];
-        let head  =  {...snakeCopy[0]};
+        let head  =  {...snakeCopy[snakeCopy.length-1]};
         let food = this.state.food;
         if ((head.x === food.x) &&(head.y === food.y)) {
             snakeCopy.push(head);
@@ -97,13 +97,14 @@ class App extends Component {
     }
 
     isCollapsed = () => {
-        // TODO: the code doesnt work. 
-        // for (let s in snake) {
-        //     if ((head.x === s.x) &&(head.y === s.y)) {
-        //         return true;
-        //     }
-        // }
-        // return false;
+        let snake = this.state.snake;
+        let head  = {...snake[snake.length-1]} 
+        for (let i=0; i<snake.length-3; i++) {
+            if ((head.x === snake[i].x) &&(head.y === snake[i].y)) {
+                this.setState(initialState);
+                alert(`game over: ${snake.length*10}`)
+            }
+        }
     }
 
     changeDirection = ({keyCode}) => { 
