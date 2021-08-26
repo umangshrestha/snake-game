@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, {Component} from "react";
 import "./App.css"
 
 
@@ -6,19 +6,17 @@ const  HEIGHT = 10;
 const  WIDTH  = 10;
 
 // mapping keycode  for changing direction
-const LEFT = 37;
-const UP   = 38;
-const RIGHT =39; 
-const DOWN = 40;
-const STOP = 32; /* [space] used for pause */
-
+const LEFT  = 37; 
+const UP    = 38;
+const RIGHT = 39; 
+const DOWN  = 40;
+const STOP  = 32; /* [space] used for pause */
 
 
 const getRandom = () => {
-    const rand = (x) => Math.floor(Math.random() * x); 
     return  { 
-        x: rand(WIDTH),
-        y: rand(HEIGHT) 
+        x: Math.floor(Math.random() *WIDTH),
+        y: Math.floor(Math.random() *HEIGHT) 
     }
 }
 
@@ -26,132 +24,130 @@ const getRandom = () => {
 const emptyRows = () => [...Array(WIDTH)].map((_) => [...Array(HEIGHT)].map((_)=> 'grid-item'));
 
 
-const App = () => {
-    const [rows, setRows] = useState(emptyRows());
-    const [snake, setSnake] = useState( [] );
-    const [food, setFood] = useState(getRandom());
-    const [curDirection, setDirection] = useState(STOP);
-    /*
-     * I am sure we can use snake[snake.length-1] or shanke[0] instead of head
-     * but it will take time to write and debug and fix the issues as it pops along
-     *  which i dont feel is worth it right now
-     */
-    const [head, setHead] = useState(getRandom());
+const increaseSpeed = (speed) => speed - 10 *(speed > 10)
 
-    const hasEaten = () => (head.x === food.x) &&(head.y === food.y)
-    
-    const isWon = () => {
-        // TODO: the code doesnt work. 
-        for (let i=1; i< snake.length; i++) {
-            if ((head.x === snake[0].x) &&(head.y === snake[0].y)) {
-                return true;
-            }
-        }
-        return false;
+
+const initialState = {
+    rows: emptyRows(),
+    snake: [getRandom()],
+    food: getRandom(),
+    direction: STOP,
+    speed: 100,
+}
+
+class App extends Component {
+
+    constructor() {
+        super();
+        this.state = initialState;
     }
-    const changeDirection = ({keyCode}) => { 
+
+    componentDidMount() {
+        setInterval(this.moveSnake, this.state.speed);
+        document.onkeydown = this.changeDirection;
+    }
+
+    componentDidUpdate() {
+        this.isCollapsed();
+        this.isEaten();
+    }
+
+    moveSnake = () => {
+        let snakeCopy = [...this.state.snake];
+        let head  =  {...snakeCopy[0]};
+        switch (this.state.direction) {
+            case LEFT:  head.y += -1; break;    
+            case UP:    head.x += -1; break;
+            case RIGHT: head.y += 1;  break;
+            case DOWN:  head.x += 1;  break;
+            default: return;
+        }
+        /* keep the value within range of 0 to HEIGHT */
+        head.x += HEIGHT * ((head.x<0)-(head.x>=HEIGHT));
+        head.y += WIDTH * ((head.y<0)-(head.y>=WIDTH));
+        
+        snakeCopy.push(head); 
+        snakeCopy.shift()
+        this.setState({
+            snake: snakeCopy,
+            head: head
+        });
+        this.update(); 
+    }   
+    
+    isEaten() {
+        let snakeCopy  = [...this.state.snake];
+        let head  =  {...snakeCopy[0]};
+        let food = this.state.food;
+        if ((head.x === food.x) &&(head.y === food.y)) {
+            snakeCopy.push(head);
+            this.setState({
+                snake: snakeCopy,
+                food: getRandom(),
+                speed: increaseSpeed(this.state.speed) 
+            });
+        } 
+    }
+
+    update() {
+        let newRows = emptyRows(); 
+        this.state.snake.forEach(element => newRows[element.x][element.y] = 'snake')
+        newRows[this.state.food.x][this.state.food.y] = 'food';
+        this.setState({rows: newRows});
+    }
+
+    isCollapsed = () => {
+        // TODO: the code doesnt work. 
+        // for (let s in snake) {
+        //     if ((head.x === s.x) &&(head.y === s.y)) {
+        //         return true;
+        //     }
+        // }
+        // return false;
+    }
+
+    changeDirection = ({keyCode}) => { 
+        let direction = this.state.direction;
         switch (keyCode) {
             case LEFT:
-                (curDirection === RIGHT)? 
-                    setDirection(RIGHT):
-                    setDirection(LEFT)
+                direction = (direction === RIGHT)? RIGHT: LEFT;
                 break;
             case RIGHT:
-                (curDirection === LEFT)?
-                    setDirection(LEFT):
-                    setDirection(RIGHT)
+                direction = (direction === LEFT)? LEFT: RIGHT;
                 break;
             case UP:
-                (curDirection === DOWN)?
-                    setDirection(DOWN):
-                    setDirection(UP)
+                direction = (direction === DOWN)? DOWN: UP;
                 break;
             case DOWN:
-                (curDirection === UP)?
-                    setDirection(UP):
-                    setDirection(DOWN)
+                direction = (direction === UP)? UP: DOWN;
+                break;
+            case STOP:
+                direction = STOP;
                 break;
             default:
                 break;
         }
+        this.setState({
+            direction: direction
+        });
     }    
-    document.addEventListener("keydown", changeDirection, false)
 
-    const move = () => {
-        const delta = {x:0, y:0}; 
-        switch (curDirection) {
-            case LEFT:  delta.y = -1; break;    
-            case UP:    delta.x = -1; break;
-            case RIGHT: delta.y = 1;  break;
-            case DOWN:  delta.x = 1;  break;
-            default: return;
-        }
-                            /* keep the value within range of 0 to HEIGHT */
-        head.x += delta.x;  head.x += HEIGHT * ((head.x<0)-(head.x>=HEIGHT));
-        head.y += delta.y;  head.y += WIDTH * ((head.y<0)-(head.y>=WIDTH));
-
-        setHead(head)
-
-        if (hasEaten()) {
-            setFood(getRandom());
-            snake.push({...head});
-        } else if (isWon()) {
-                let value = snake.length *10;
-                alert(`your score: ${value}`);
-                setHead(getRandom());
-                setSnake([]);
-                setRows(emptyRows())
-                setDirection(RIGHT);
-                return;
-        }
-
-        snake.shift()
-        snake.push({...head}); 
-        setSnake(snake);
-        update(); 
-
-     
-    }   
-    
-
-    const update = () => {
-        const newRows = emptyRows(); /* I am not sure, but I feel this code is the issue causing delay in frame */
-        snake.forEach(element => newRows[element.x][element.y] = 'snake')
-        newRows[food.x][food.y] = 'food';
-        setRows(newRows);
-    }
-
-    const useInterval = (callback, delay) => {
-      const savedCallback = useRef();
-      useEffect(()=> {
-        savedCallback.current = callback;
-      }, [callback]);
-      useEffect(() => {
-        function tick() {
-          savedCallback.current();
-        }
-        if (delay !== null) {
-          let id = setInterval(tick, delay);
-          return () => clearInterval(id);
-        }
-      }, [delay]);
-    }
-
-    useInterval(move, 200);
-    
-    const displayRows = rows.map((row, i) => row.map((value, j) =>  <div name={`${i}=${j}`} className={value} />))
-    return (
-        <div className="a">
-            <h1> Snake  v0.1.1</h1>
-            <ul>
-                <li>press "space" to pause the game.</li>
-                <li>press "arrow keys" to change direction/ unpause.</li>
-            </ul>
-            <div className="snake-container">
-                <div className="grid">{displayRows}</div>
+   
+    render() {
+        const displayRows = this.state.rows.map((row, i) => row.map((value, j) =>  <div name={`${i}=${j}`} className={value} />))
+        return (
+            <div className="a">
+                <h1> Snake  v0.1.1</h1>
+                <ul>
+                    <li>press "space" to pause the game.</li>
+                    <li>press "arrow keys" to change direction/ unpause.</li>
+                </ul>
+                <div className="snake-container">
+                    <div className="grid">{displayRows}</div>
+                </div>
             </div>
-        </div>
-    )    
+        )    
+    }
 }
 
 
