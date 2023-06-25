@@ -12,6 +12,7 @@ import { Board } from "./components/Board/Board";
 import { useEffect } from "react";
 import { AppProps } from "./App.types";
 import { Direction } from "./components/Square/Square.types";
+import { Helmet } from "react-helmet";
 
 const App = ({
   speed,
@@ -22,7 +23,7 @@ const App = ({
   changeDirection,
   ...boardProps
 }: AppProps) => {
-  
+
   useEffect(() => {
     document.title = "Snake Game";
   }, []);
@@ -52,6 +53,20 @@ const App = ({
 
   return (
     <>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>Snake Game</title>
+        <meta
+          name="description"
+          content="A simple snake game built using React and Redux."
+        />
+        <meta name="author" content="Umang Shrestha" /> 
+        <meta
+          name="keywords"
+          content="snake, game, react, redux, typescript, umang shrestha"
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </Helmet>
       <header>
         <h1>Snake Game</h1>
       </header>
