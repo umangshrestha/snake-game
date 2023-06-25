@@ -23,7 +23,6 @@ const App = ({
   changeDirection,
   ...boardProps
 }: AppProps) => {
-
   useEffect(() => {
     document.title = "Snake Game";
   }, []);
@@ -60,7 +59,7 @@ const App = ({
           name="description"
           content="A simple snake game built using React and Redux."
         />
-        <meta name="author" content="Umang Shrestha" /> 
+        <meta name="author" content="Umang Shrestha" />
         <meta
           name="keywords"
           content="snake, game, react, redux, typescript, umang shrestha"
@@ -88,8 +87,6 @@ const App = ({
     </>
   );
 };
-
-
 
 const mapStateToProps = ({ snake: state }: RootState) => ({
   ...state,
