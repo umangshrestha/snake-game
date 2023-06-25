@@ -1,0 +1,42 @@
+@import "../../styles/variables.css";
+
+.gameStatus {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  text-align: center;
+}
+
+.gameStatus input[type="text"] {
+  margin: 0;
+  padding: 5px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 1.6rem;
+  text-transform: uppercase;
+}
+
+.gameStatus input[type="number"] {
+  padding: 5px;
+  font-size: 3rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.wrapper button {
+  border: none;
+  background-color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-block;
+  text-transform: capitalize;
+}
+
+.wrapper button[type="reset"] {
+  color: #f44336;
+}

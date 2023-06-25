@@ -1,0 +1,9 @@
+:root {
+  --square-size: 50px;
+  --square-background: #fff;
+  --square-snake: #4caf50;
+  --square-food: #f33;
+
+  --board-width: calc(var(--square-size) * var(--n-rows));
+  --board-height: calc(var(--square-size) * var(--n-cols));
+}
