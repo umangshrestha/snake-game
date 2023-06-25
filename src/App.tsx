@@ -1,13 +1,13 @@
 import "./styles/App.css";
+import { AppDispatch, RootState } from "./store/store.types";
+import { connect } from "react-redux";
 import {
   resetGame,
   setDirection,
   togglePause,
   updateBoard,
 } from "./store/store.slice";
-import { AppDispatch, RootState } from "./store/store.types";
 import { GameStatus } from "./components/GameStatus/GameStatus";
-import { connect } from "react-redux";
 import { Board } from "./components/Board/Board";
 import { useEffect } from "react";
 import { AppProps } from "./App.types";
@@ -22,6 +22,7 @@ const App = ({
   changeDirection,
   ...boardProps
 }: AppProps) => {
+  
   useEffect(() => {
     document.title = "Snake Game";
   }, []);
@@ -72,6 +73,8 @@ const App = ({
     </>
   );
 };
+
+
 
 const mapStateToProps = ({ snake: state }: RootState) => ({
   ...state,

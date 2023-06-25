@@ -1,9 +1,8 @@
-import { BoardProps } from "./components/Board/Board.types";
 import { GameStatusProps } from "./components/GameStatus/GameStatus.types";
-import { Direction, StoreType } from "./store/store.types";
+import { Direction } from "./components/Square/Square.types";
+import { StoreType } from "./store/store.types";
 
-export type AppProps = BoardProps &
-  GameStatusProps &
+export type AppProps = GameStatusProps &
   StoreType & {
     moveSnake: () => void;
     changeDirection: (dir: Direction) => void;

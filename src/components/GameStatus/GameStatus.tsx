@@ -8,26 +8,24 @@ export const GameStatus: FC<GameStatusProps> = ({
   score,
   onReset,
   onTogglePause,
-}) => {
-  return (
-    <section className={styles.gameStatus}>
-      <input type="text" value={gameState} disabled />
+}) => (
+  <section className={styles.gameStatus}>
+    <input type="text" value={gameState} disabled />
 
-      <input type="number" value={score} disabled />
+    <input type="number" value={score} disabled />
 
-      <div className={styles.wrapper}>
-        <button type="reset" onClick={onReset}>
-          Reset
-        </button>
-        <button
-          type="button"
-          onClick={onTogglePause}
-          disabled={gameState === GameState.GameOver}
-        >
-          {gameState === GameState.Paused ? "Resume" : "Pause"}
-        </button>
-        <InformationModal />
-      </div>
-    </section>
-  );
-};
+    <div className={styles.wrapper}>
+      <button type="reset" onClick={onReset}>
+        Reset
+      </button>
+      <button
+        type="button"
+        onClick={onTogglePause}
+        disabled={gameState === GameState.GameOver}
+      >
+        {gameState === GameState.Paused ? "Resume" : "Pause"}
+      </button>
+      <InformationModal />
+    </div>
+  </section>
+);
